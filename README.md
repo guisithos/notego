@@ -25,12 +25,12 @@ NoteGo is an open-source note-taking application inspired by Google Keep, with t
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/notego.git
+   git clone https://github.com/guisithos/notego.git
    ```
 
 2. Set up the database:
    ```bash
-   createdb notego
+   createdb notego-db
    ```
 
 3. Update the database connection string in `main.go` if needed.
