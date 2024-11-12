@@ -15,7 +15,7 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		DatabaseURL:   getEnv("DATABASE_URL", "host=localhost user=postgres password=postgres dbname=notego port=5432 sslmode=disable"),
+		DatabaseURL:   getEnv("DATABASE_URL", "host=localhost user=notego password=password dbname=notego-db port=5432 sslmode=disable"),
 		ServerAddress: getEnv("SERVER_ADDRESS", ":8080"),
 	}
 }

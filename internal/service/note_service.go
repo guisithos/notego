@@ -66,3 +66,7 @@ func (s *NoteService) UpdateNote(note *models.Note, commitMsg string) error {
 func (s *NoteService) DeleteNote(id uint) error {
 	return s.noteRepo.Delete(id)
 }
+
+func (s *NoteService) GetNoteVersions(noteID uint) ([]models.NoteVersion, error) {
+	return s.versionRepo.FindByNoteID(noteID)
+}
