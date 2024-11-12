@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/yourusername/notego/internal/models"
-	"github.com/yourusername/notego/internal/repository"
-	"github.com/yourusername/notego/pkg/hash"
+	"github.com/guisithos/notego/internal/models"
+	"github.com/guisithos/notego/internal/repository"
+	"github.com/guisithos/notego/pkg/hash"
 )
 
 type NoteService struct {

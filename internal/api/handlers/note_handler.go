@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/yourusername/notego/internal/models"
-	"github.com/yourusername/notego/internal/service"
+	"github.com/guisithos/notego/internal/models"
+	"github.com/guisithos/notego/internal/service"
 )
 
 type NoteHandler struct {
@@ -53,4 +53,15 @@ func (h *NoteHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(note)
+}
+
+func (h *NoteHandler) HandleNotes(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.GetAll(w, r)
+	case http.MethodPost:
+		h.Create(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }

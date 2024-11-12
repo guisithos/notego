@@ -4,11 +4,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yourusername/notego/internal/api/handlers"
-	"github.com/yourusername/notego/internal/config"
-	"github.com/yourusername/notego/internal/repository"
-	"github.com/yourusername/notego/internal/service"
+	"github.com/guisithos/notego/internal/api/handlers"
+	"github.com/guisithos/notego/internal/config"
+	"github.com/guisithos/notego/internal/repository"
+	"github.com/guisithos/notego/internal/service"
 )
+
+func initRouter(noteHandler *handlers.NoteHandler) *http.ServeMux {
+	router := http.NewServeMux()
+	router.HandleFunc("/notes", noteHandler.HandleNotes)
+	return router
+}
 
 func main() {
 	// Initialize config
@@ -30,7 +36,7 @@ func main() {
 	// Initialize router
 	router := initRouter(noteHandler)
 
-	// Start server
+	// Start
 	log.Printf("Server starting on %s", cfg.ServerAddress)
 	log.Fatal(http.ListenAndServe(cfg.ServerAddress, router))
 }

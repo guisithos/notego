@@ -1,9 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
@@ -64,7 +67,7 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 		Content:    note.Content,
 		Color:      note.Color,
 		CommitMsg:  "Initial version",
-		CommitHash: generateHash(note), // You'll need to implement this
+		CommitHash: generateHash(note),
 	}
 	db.Create(&version)
 
@@ -102,8 +105,8 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 		Content:    note.Content,
 		Color:      note.Color,
 		CommitMsg:  r.Header.Get("X-Commit-Message"),
-		ParentHash: getLatestVersionHash(note.ID), // You'll need to implement this
-		CommitHash: generateHash(note),            // You'll need to implement this
+		ParentHash: getLatestVersionHash(note.ID),
+		CommitHash: generateHash(note),
 	}
 	db.Create(&version)
 
@@ -130,9 +133,10 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateHash(note Note) string {
-	// Implementation needed: Generate a unique hash based on note content and timestamp
-	// You might want to use SHA-256 or similar
-	return ""
+	h := sha256.New()
+	data := fmt.Sprintf("%s-%s-%s-%d", note.Title, note.Content, note.Color, time.Now().UnixNano())
+	h.Write([]byte(data))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 func getLatestVersionHash(noteID uint) string {

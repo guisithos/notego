@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/yourusername/notego/internal/models"
+	"github.com/guisithos/notego/internal/models"
 	"gorm.io/gorm"
 )
 
