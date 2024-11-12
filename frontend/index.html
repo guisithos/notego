@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteGo - Your Notes with Version Control</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button class="menu-btn">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="logo">
+                <img src="assets/logo.png" alt="NoteGo Logo">
+                <span>NoteGo</span>
+            </div>
+        </div>
+        <div class="search-bar">
+            <span class="material-icons">search</span>
+            <input type="text" placeholder="Search notes...">
+        </div>
+        <div class="header-right">
+            <button class="view-btn">
+                <span class="material-icons">grid_view</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="note-input">
+            <div class="note-input-container" onclick="expandNoteInput()">
+                <input type="text" id="title-input" placeholder="Take a note..." class="hidden">
+                <textarea id="content-input" placeholder="Take a note..." rows="1"></textarea>
+                <div class="note-actions hidden">
+                    <div class="note-tools">
+                        <button title="Change color">
+                            <span class="material-icons">palette</span>
+                        </button>
+                        <button title="Archive">
+                            <span class="material-icons">archive</span>
+                        </button>
+                    </div>
+                    <button class="close-btn" onclick="closeNoteInput()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-grid" id="notes-container">
+            <!-- Notes will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <div class="color-picker hidden">
+        <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
+        <div class="color-option" data-color="#f28b82" style="background-color: #f28b82;"></div>
+        <div class="color-option" data-color="#fbbc04" style="background-color: #fbbc04;"></div>
+        <div class="color-option" data-color="#fff475" style="background-color: #fff475;"></div>
+        <div class="color-option" data-color="#ccff90" style="background-color: #ccff90;"></div>
+        <div class="color-option" data-color="#a7ffeb" style="background-color: #a7ffeb;"></div>
+        <div class="color-option" data-color="#cbf0f8" style="background-color: #cbf0f8;"></div>
+        <div class="color-option" data-color="#aecbfa" style="background-color: #aecbfa;"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
