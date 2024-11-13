@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoteGo - Your Notes with Version Control</title>
+    <title>NoteGo - Notes with Versioning</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="styles/main.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -14,8 +15,8 @@
                 <span class="material-icons">menu</span>
             </button>
             <div class="logo">
-                <img src="assets/logo.png" alt="NoteGo Logo">
-                <span>NoteGo</span>
+                <img src="assets/logo.png" alt="Notego Logo">
+                <span>Notego</span>
             </div>
         </div>
         <div class="search-bar">
@@ -39,8 +40,8 @@
                         <button title="Change color">
                             <span class="material-icons">palette</span>
                         </button>
-                        <button title="Archive">
-                            <span class="material-icons">archive</span>
+                        <button title="Save" onclick="closeNoteInput()">
+                            <span class="material-icons">save</span>
                         </button>
                     </div>
                     <button class="close-btn" onclick="closeNoteInput()">Close</button>
@@ -48,7 +49,7 @@
             </div>
         </div>
 
-        <div class="notes-grid" id="notes-container">
+        <div id="notes-container" class="notes-grid">
             <!-- Notes will be dynamically inserted here -->
         </div>
     </main>
