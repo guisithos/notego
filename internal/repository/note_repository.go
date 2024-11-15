@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/guisithos/notego/internal/models"
 	"gorm.io/gorm"
 )
@@ -19,8 +21,11 @@ func (r *NoteRepository) Create(note *models.Note) error {
 
 func (r *NoteRepository) FindAll() ([]models.Note, error) {
 	var notes []models.Note
-	err := r.db.Find(&notes).Error
-	return notes, err
+	err := r.db.Where("deleted_at IS NULL").Order("created_at DESC").Find(&notes).Error
+	if err != nil {
+		return nil, err
+	}
+	return notes, nil
 }
 
 func (r *NoteRepository) FindByID(id uint) (*models.Note, error) {
@@ -34,5 +39,21 @@ func (r *NoteRepository) Update(note *models.Note) error {
 }
 
 func (r *NoteRepository) Delete(id uint) error {
-	return r.db.Delete(&models.Note{}, id).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		var note models.Note
+		if err := tx.First(&note, id).Error; err != nil {
+			return err
+		}
+
+		result := tx.Model(&note).Update("deleted_at", time.Now())
+		if result.Error != nil {
+			return result.Error
+		}
+
+		return nil
+	})
+}
+
+func (r *NoteRepository) Transaction(fn func(*gorm.DB) error) error {
+	return r.db.Transaction(fn)
 }

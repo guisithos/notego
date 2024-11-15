@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/guisithos/notego/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -32,5 +33,22 @@ func InitDB(cfg *Config) *gorm.DB {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
+
+	// Auto-migrate the schema
+	if err := db.AutoMigrate(&models.Note{}, &models.Version{}); err != nil {
+		log.Fatal("Failed to migrate database schema:", err)
+	}
+
+	// Test the connection
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal("Failed to get database instance:", err)
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatal("Failed to ping database:", err)
+	}
+
+	log.Println("Successfully connected to database")
 	return db
 }

@@ -166,6 +166,9 @@ main {
     padding: 16px;
     max-width: 1200px;
     margin: 0 auto;
+    min-height: 100px;
+    position: relative;
+    z-index: 1;
 }
 
 .note-card {
@@ -176,6 +179,12 @@ main {
     position: relative;
     cursor: pointer;
     transition: box-shadow 0.2s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    word-wrap: break-word;
+    display: block;
+    margin-bottom: 16px;
 }
 
 .note-card:hover {
@@ -187,14 +196,20 @@ main {
 }
 
 .color-picker {
-    position: absolute;
+    position: fixed;
     background: white;
     border-radius: 8px;
     padding: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 4px;
+    z-index: 1000;
+    visibility: visible;
+}
+
+.color-picker.hidden {
+    display: none;
 }
 
 .color-option {
@@ -203,8 +218,48 @@ main {
     border-radius: 50%;
     cursor: pointer;
     border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
 }
 
 .color-option:hover {
+    transform: scale(1.1);
     border: 2px solid #000;
+}
+
+.color-option[data-color="#ffffff"] {
+    border: 1px solid #e0e0e0;
+}
+
+.color-option[data-color="#ffffff"]:hover {
+    border: 2px solid #000;
+}
+
+.note-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.note-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #202124;
+}
+
+.note-tools {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.note-tools button {
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.note-tools button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 } 
