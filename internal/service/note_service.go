@@ -33,7 +33,7 @@ func (s *NoteService) CreateNote(note *models.Note) error {
 		Content:    note.Content,
 		Color:      note.Color,
 		CommitMsg:  "Initial version",
-		CommitHash: hash.Generate(note),
+		CommitHash: hash.Generate(note, "", "Initial version"),
 		Action:     "create",
 	}
 
@@ -41,11 +41,13 @@ func (s *NoteService) CreateNote(note *models.Note) error {
 }
 
 func (s *NoteService) GetNotes() ([]models.Note, error) {
+	// The SQL query in noteRepo.FindAll() already gets the latest versions
 	notes, err := s.noteRepo.FindAll()
 	if err != nil {
 		log.Printf("Error getting notes from repository: %v", err)
 		return nil, err
 	}
+
 	log.Printf("Retrieved %d notes from database", len(notes))
 	return notes, nil
 }
@@ -55,6 +57,9 @@ func (s *NoteService) GetNote(id uint) (*models.Note, error) {
 }
 
 func (s *NoteService) UpdateNote(note *models.Note, commitMsg string) error {
+	// Get the latest version's hash
+	parentHash := s.versionRepo.GetLatestHash(note.ID)
+
 	// Create new version before updating
 	version := models.Version{
 		NoteID:     note.ID,
@@ -62,8 +67,8 @@ func (s *NoteService) UpdateNote(note *models.Note, commitMsg string) error {
 		Content:    note.Content,
 		Color:      note.Color,
 		CommitMsg:  commitMsg,
-		ParentHash: s.versionRepo.GetLatestHash(note.ID),
-		CommitHash: hash.Generate(note),
+		ParentHash: parentHash,
+		CommitHash: hash.Generate(note, parentHash, commitMsg),
 		Action:     "update",
 	}
 
@@ -82,6 +87,9 @@ func (s *NoteService) DeleteNote(id uint, commitMsg string) error {
 		return fmt.Errorf("note not found: %w", err)
 	}
 
+	// Get the latest version's hash
+	parentHash := s.versionRepo.GetLatestHash(note.ID)
+
 	// Create a version record for the deletion
 	version := models.Version{
 		NoteID:     note.ID,
@@ -89,8 +97,8 @@ func (s *NoteService) DeleteNote(id uint, commitMsg string) error {
 		Content:    note.Content,
 		Color:      note.Color,
 		CommitMsg:  commitMsg,
-		CommitHash: hash.Generate(note),
-		ParentHash: s.versionRepo.GetLatestHash(note.ID),
+		CommitHash: hash.Generate(note, parentHash, commitMsg),
+		ParentHash: parentHash,
 		Action:     "delete",
 	}
 

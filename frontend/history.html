@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note History - NoteGo</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="history-page">
+        <div class="history-header">
+            <h1 class="history-title">Note History</h1>
+            <button class="back-btn" onclick="window.location.href='/'">
+                <span class="material-icons">arrow_back</span>
+                Back to Notes
+            </button>
+        </div>
+        <div id="version-list" class="version-list">
+            <!-- Versions will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/history.js"></script>
+</body>
+</html> 

@@ -262,4 +262,116 @@ main {
 
 .note-tools button:hover {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.note-history {
+    margin-top: 16px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.version-item {
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.version-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.version-message {
+    font-size: 14px;
+    color: #333;
+}
+
+.show-more-btn {
+    width: 100%;
+    padding: 8px;
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.show-more-btn:hover {
+    background-color: var(--hover-color);
+}
+
+/* Add these styles for the detailed history page */
+.history-page {
+    max-width: 800px;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.history-title {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    background-color: var(--hover-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.back-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.version-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.version-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    background-color: white;
+}
+
+.version-metadata {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #666;
+}
+
+.version-content {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
 } 

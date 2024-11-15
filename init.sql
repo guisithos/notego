@@ -27,7 +27,6 @@ CREATE TABLE versions (
     action VARCHAR(20)
 );
 
--- Added indexes for better performance
 CREATE INDEX idx_notes_deleted_at ON notes(deleted_at);
 CREATE INDEX idx_versions_note_id ON versions(note_id);
 CREATE INDEX idx_versions_commit_hash ON versions(commit_hash);

@@ -8,9 +8,16 @@ import (
 	"github.com/guisithos/notego/internal/models"
 )
 
-func Generate(note *models.Note) string {
+func Generate(note *models.Note, parentHash, commitMsg string) string {
 	h := sha256.New()
-	data := fmt.Sprintf("%d-%s-%s-%s-%d", note.ID, note.Title, note.Content, note.Color, time.Now().UnixNano())
+	data := fmt.Sprintf("%s-%s-%s-%s-%s-%d",
+		parentHash, // Previous version's hash
+		note.Title,
+		note.Content,
+		note.Color,
+		commitMsg, // Commit message
+		time.Now().UnixNano(),
+	)
 	h.Write([]byte(data))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }

@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:8080';
 
 const api = {
     async getNotes() {
-        const response = await fetch(`${API_URL}/notes`, {
+        const response = await fetch(`${API_URL}/notes/latest`, {
             method: 'GET',
             mode: 'cors',
             credentials: 'include',
@@ -74,7 +74,14 @@ const api = {
     },
 
     async getNoteHistory(id) {
-        const response = await fetch(`${API_URL}/notes/${id}/versions`);
+        const response = await fetch(`${API_URL}/notes/${id}/versions`, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
         if (!response.ok) throw new Error('Failed to fetch note history');
         return response.json();
     },

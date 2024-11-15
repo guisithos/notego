@@ -96,10 +96,10 @@ function createNoteElement(note) {
             <button title="Change color" onclick="showColorPicker(event, ${note.ID})">
                 <span class="material-icons">palette</span>
             </button>
-            <button onclick="saveNote(${note.ID})">
+            <button onclick="saveNote(event, ${note.ID})">
                 <span class="material-icons">save</span>
             </button>
-            <button onclick="showHistory(${note.ID})">
+            <button onclick="showHistory(event, ${note.ID})">
                 <span class="material-icons">history</span>
             </button>
             <button title="Delete note" onclick="deleteNote(event, ${note.ID})">
@@ -135,21 +135,40 @@ async function closeNoteInput() {
 
     if (title || content) {
         try {
-            const note = {
-                Title: title || '',  // Note the capital 'T'
-                Content: content || '',  // Note the capital 'C'
-                Color: '#ffffff',  // Note the capital 'C'
-            };
-            console.log('Sending note to server:', note);
-            const createdNote = await api.createNote(note);
-            console.log('Server response for created note:', createdNote);
+            if (activeNoteId) {
+                // This is an edit of an existing note
+                const existingNote = notes.find(n => n.ID === activeNoteId);
+                if (existingNote) {
+                    const updatedNote = {
+                        ...existingNote,
+                        Title: title,
+                        Content: content
+                    };
+                    // Get the updated note from the server
+                    const savedNote = await api.updateNote(activeNoteId, updatedNote, 'User edited note');
+                    // Update the note in our local array - replace the old version with the new one
+                    const index = notes.findIndex(n => n.BaseID === savedNote.BaseID);
+                    if (index !== -1) {
+                        notes[index] = savedNote;
+                    } else {
+                        notes.push(savedNote);
+                    }
+                }
+            } else {
+                // This is a new note
+                const note = {
+                    Title: title,
+                    Content: content,
+                    Color: '#ffffff',
+                };
+                const newNote = await api.createNote(note);
+                notes.push(newNote);
+            }
             
-            // Immediately reload notes after creation
-            console.log('Reloading notes after creation...');
-            await loadNotes();
-            console.log('Notes reloaded');
+            // Update UI
+            renderNotes();
         } catch (error) {
-            console.error('Failed to create note:', error);
+            console.error('Failed to save note:', error);
             alert('Failed to save note. Please try again.');
             return; // Don't clear inputs if save failed
         }
@@ -161,6 +180,7 @@ async function closeNoteInput() {
     container.classList.remove('expanded');
     titleInput.classList.add('hidden');
     actions.classList.add('hidden');
+    activeNoteId = null;
 }
 
 function showColorPicker(event, noteId) {
@@ -245,16 +265,115 @@ function showColorPicker(event, noteId) {
     });
 }
 
-function saveNote(noteId) {
+async function saveNote(event, noteId) {
     event.stopPropagation(); // Prevent note edit when clicking save
-    // TODO: Implement save functionality
-    console.log('Save note:', noteId);
+    
+    try {
+        const note = notes.find(n => n.ID === noteId);
+        if (!note) {
+            throw new Error('Note not found');
+        }
+
+        // Get current values from the note card
+        const noteElement = document.querySelector(`.note-card[data-note-id="${noteId}"]`);
+        const titleElement = noteElement.querySelector('h3');
+        const contentElement = noteElement.querySelector('p');
+
+        const updatedNote = {
+            ...note,
+            Title: titleElement.textContent,
+            Content: contentElement.textContent
+        };
+
+        // Update on server
+        const savedNote = await api.updateNote(noteId, updatedNote, 'User saved note');
+        
+        // Update in local array
+        const index = notes.findIndex(n => n.ID === noteId);
+        if (index !== -1) {
+            notes[index] = savedNote;
+        }
+        
+        // Update UI without reloading all notes
+        renderNotes();
+    } catch (error) {
+        console.error('Failed to save note:', error);
+        alert('Failed to save note. Please try again.');
+    }
 }
 
-function showHistory(noteId) {
+async function showHistory(event, noteId) {
     event.stopPropagation(); // Prevent note edit when clicking history
-    // TODO: Implement history functionality
-    console.log('Show history for note:', noteId);
+    
+    try {
+        // Find the note element
+        const noteElement = document.querySelector(`.note-card[data-note-id="${noteId}"]`);
+        if (!noteElement) {
+            console.error('Note element not found');
+            return;
+        }
+
+        // Check if history is already shown (toggle functionality)
+        const existingHistory = noteElement.querySelector('.note-history');
+        if (existingHistory) {
+            existingHistory.remove();
+            return;
+        }
+
+        // Fetch note history
+        const versions = await api.getNoteHistory(noteId);
+        console.log('Fetched versions:', versions);
+
+        // Create history container
+        const historyContainer = document.createElement('div');
+        historyContainer.className = 'note-history';
+        
+        // Show up to 5 versions initially
+        const initialVersions = versions.slice(0, 5);
+        initialVersions.forEach(version => {
+            const versionElement = createVersionElement(version);
+            historyContainer.appendChild(versionElement);
+        });
+
+        // Add "Show More" button if there are more versions
+        if (versions.length > 5) {
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'show-more-btn';
+            showMoreBtn.innerHTML = `
+                <span class="material-icons">more_horiz</span>
+                Show all ${versions.length} versions
+            `;
+            showMoreBtn.onclick = (e) => {
+                e.stopPropagation();
+                window.location.href = `/history.html?noteId=${noteId}`;
+            };
+            historyContainer.appendChild(showMoreBtn);
+        }
+
+        // Insert history container after the note tools
+        const toolsContainer = noteElement.querySelector('.note-tools');
+        toolsContainer.parentNode.insertBefore(historyContainer, toolsContainer.nextSibling);
+
+    } catch (error) {
+        console.error('Failed to load note history:', error);
+        alert('Failed to load note history. Please try again.');
+    }
+}
+
+function createVersionElement(version) {
+    const versionDate = new Date(version.CreatedAt).toLocaleString();
+    const element = document.createElement('div');
+    element.className = 'version-item';
+    
+    element.innerHTML = `
+        <div class="version-header">
+            <span class="version-date">${versionDate}</span>
+            <span class="version-action">${version.Action}</span>
+        </div>
+        <div class="version-message">${version.CommitMsg}</div>
+    `;
+    
+    return element;
 }
 
 // Add click event listener to close color picker when clicking outside

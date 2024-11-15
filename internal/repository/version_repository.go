@@ -19,7 +19,10 @@ func (r *VersionRepository) Create(version *models.Version) error {
 
 func (r *VersionRepository) GetLatestHash(noteID uint) string {
 	var version models.Version
-	r.db.Where("note_id = ?", noteID).Order("created_at DESC").First(&version)
+	err := r.db.Where("note_id = ?", noteID).Order("created_at DESC").First(&version).Error
+	if err != nil {
+		return ""
+	}
 	return version.CommitHash
 }
 
@@ -27,4 +30,13 @@ func (r *VersionRepository) FindByNoteID(noteID uint) ([]models.Version, error) 
 	var versions []models.Version
 	err := r.db.Where("note_id = ?", noteID).Order("created_at DESC").Find(&versions).Error
 	return versions, err
+}
+
+func (r *VersionRepository) GetLatestVersion(noteID uint) (*models.Version, error) {
+	var version models.Version
+	err := r.db.Where("note_id = ?", noteID).Order("created_at DESC").First(&version).Error
+	if err != nil {
+		return nil, err
+	}
+	return &version, nil
 }

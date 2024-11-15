@@ -21,11 +21,30 @@ func (r *NoteRepository) Create(note *models.Note) error {
 
 func (r *NoteRepository) FindAll() ([]models.Note, error) {
 	var notes []models.Note
-	err := r.db.Where("deleted_at IS NULL").Order("created_at DESC").Find(&notes).Error
-	if err != nil {
-		return nil, err
-	}
-	return notes, nil
+	err := r.db.Raw(`
+		WITH LatestVersions AS (
+			SELECT note_id, MAX(created_at) as max_created_at
+			FROM versions
+			GROUP BY note_id
+		)
+		SELECT 
+			n.id,
+			n.created_at,
+			n.updated_at,
+			n.deleted_at,
+			v.title,
+			v.content,
+			v.color,
+			n.archived,
+			n.pinned
+		FROM notes n
+		INNER JOIN versions v ON n.id = v.note_id
+		INNER JOIN LatestVersions lv 
+			ON v.note_id = lv.note_id 
+			AND v.created_at = lv.max_created_at
+		WHERE n.deleted_at IS NULL
+	`).Scan(&notes).Error
+	return notes, err
 }
 
 func (r *NoteRepository) FindByID(id uint) (*models.Note, error) {
@@ -35,7 +54,11 @@ func (r *NoteRepository) FindByID(id uint) (*models.Note, error) {
 }
 
 func (r *NoteRepository) Update(note *models.Note) error {
-	return r.db.Save(note).Error
+	return r.db.Model(note).Updates(map[string]interface{}{
+		"updated_at": time.Now(),
+		"archived":   note.Archived,
+		"pinned":     note.Pinned,
+	}).Error
 }
 
 func (r *NoteRepository) Delete(id uint) error {
